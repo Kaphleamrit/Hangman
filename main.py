@@ -31,31 +31,34 @@ initialY = 400
 RADIUS = 20
 GAP = 20
 LETTER_FONT = pygame.font.SysFont('comicsans', 40)
+letters = []
+
+for i in range(26):
+    letters.append([chr(65+i), True])
 
 # !draw function called inside the game loop
 
 
 def draw():
-    global mouse_Y, mouse_X
+    global mouse_Y, mouse_X, letters
     screen.fill(WHITE)
     screen.blit(hangman[hangman_status], (100, 140))
 
     for i in range(26):
         cirX = initialX + (2*RADIUS+GAP)*(i % 13)
         cirY = initialY + (2*RADIUS+GAP)*(i//13)
-        pygame.draw.circle(screen, BLACK, (cirX, cirY), RADIUS, 3)
+        ltr, visible = letters[i]
 
-        ltr = chr(65 + i)
-        text = LETTER_FONT.render(ltr, 1, BLACK)
-        screen.blit(text, (cirX-9, cirY-12))
-
-        distance = math.sqrt(math.pow((cirX-mouse_X), 2) +
-                             math.pow((cirY - mouse_Y), 2))
-        if distance < RADIUS:
-            print(ltr)
-            pygame.draw.circle(screen, WHITE, (cirX, cirY), RADIUS, 3)
-            text = LETTER_FONT.render(ltr, 1, WHITE)
+        if visible:
+            pygame.draw.circle(screen, BLACK, (cirX, cirY), RADIUS, 3)
+            text = LETTER_FONT.render(ltr, 1, BLACK)
             screen.blit(text, (cirX-9, cirY-12))
+
+            distance = math.sqrt(math.pow((cirX-mouse_X), 2) +
+                                 math.pow((cirY - mouse_Y), 2))
+            if distance < RADIUS:
+                letters[i][1] = False
+                print(letters[i])
 
 
 # !game loop
