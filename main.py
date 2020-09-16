@@ -41,8 +41,8 @@ for i in range(26):
     letters.append([chr(65+i), True])
 
 # !guessing word
-# ! if you want to change the word , you also need to change the hardcoded wining condition
-WORD = "DEVELOPING"
+#! Change the word to change the word for hangman
+WORD = "PROPERTIES"
 guessed = []
 FONT_GUESS = pygame.font.SysFont("comicsans", 60)
 guessX = 350
@@ -50,10 +50,12 @@ guessY = 250
 FONT_RESULT = pygame.font.SysFont('comicsans', 100)
 FONT_HEADER = pygame.font.SysFont('comicsans', 50)
 FONT_FOOTER = pygame.font.SysFont('comicsans', 20)
-# set = {}
+letterSet = set({})
 
-# for i in range(len(WORD)-1):
-#     set.put(WORD[i])
+for i in range(len(WORD)):
+    letterSet.add(WORD[i])
+
+print((letterSet))
 
 
 # !draw function called inside the game loop
@@ -108,7 +110,7 @@ while running:
     draw()
 
     # !check if all letter are guessed, wining condition
-    if len(guessed) == 9:
+    if len(guessed) == len(letterSet):
         text_win = FONT_RESULT.render("You Win", 1, (0, 200, 0))
         screen.blit(text_win, (300, 200))
         running = False
