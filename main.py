@@ -6,7 +6,7 @@ pygame.init()
 WIDTH = 800
 HEIGHT = 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("hangMan")
+pygame.display.set_caption("HangMan")
 running = True
 FPS = 60
 clock = pygame.time.Clock()
@@ -18,7 +18,7 @@ mouse_Y = 0
 
 # !hangmanImg load
 hangman = []
-hangman_status = 6
+hangman_status = 0
 for i in range(7):
     img = pygame.image.load('images/hangman'+str(i) + '.png')
     hangman.append(img)
@@ -35,12 +35,25 @@ letters = []
 
 for i in range(26):
     letters.append([chr(65+i), True])
+# !guessing word
+WORD = "DEVELOPING"
+guessed = []
+FONT_GUESS = pygame.font.SysFont("comicsans", 60)
+guessX = 350
+guessY = 250
+FONT_RESULT = pygame.font.SysFont('comicsans', 100)
+guessed_length = 1
+
+for i in range(1, len(WORD)-1):
+    for j in range(0, i-1):
+        if WORD[i] != WORD[j]:
+            guessed_length += 1
 
 # !draw function called inside the game loop
 
 
 def draw():
-    global mouse_Y, mouse_X, letters
+    global mouse_Y, mouse_X, letters, hangman_status, running
     screen.fill(WHITE)
     screen.blit(hangman[hangman_status], (100, 140))
 
@@ -58,7 +71,16 @@ def draw():
                                  math.pow((cirY - mouse_Y), 2))
             if distance < RADIUS:
                 letters[i][1] = False
-                print(letters[i])
+
+                if ltr in WORD:
+                    guessed.append(ltr)
+                else:
+                    hangman_status += 1
+
+                if hangman_status == 6:
+                    text_lose = FONT_RESULT.render('You Lose', 1, (200, 0, 0))
+                    screen.blit(text_lose, (300, 200))
+                    running = False
 
 
 # !game loop
@@ -66,6 +88,19 @@ while running:
     clock.tick(FPS)
 
     draw()
+
+    for letter in WORD:
+
+        if letter in guessed:
+            text_guess = FONT_GUESS.render(letter, 1, BLACK)
+            screen.blit(text_guess, (guessX+15, guessY))
+
+        else:
+            text_guess = FONT_GUESS.render("_", 1, BLACK)
+            screen.blit(text_guess, (guessX+20, guessY))
+        guessX += 40
+
+    guessX = 350
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
